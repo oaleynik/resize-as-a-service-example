@@ -1,17 +1,18 @@
 'use strict';
 
 var http = require('http')
-  , port = process.argv[2] || 3000
+  , port = process.argv[2] || process.env['RESIZE_AS_A_SERVICE_PORT'] || 3000
+  , env_host = process.argv[3] || process.env['RESIZE_AS_A_SERVICE_HOST']
   , ifcheck = require('../ifcheck')
   , server = http.createServer(require('../server').create())
   ;
 
 ifcheck.getExternalIp().then(function (ip) {
-  var host = ip || 'localhost'
-    , fqdn = ip || 'local.foobar3000.com'
+  var host = ip || env_host || 'localhost'
+    , fqdn = ip || env_host || 'local.foobar3000.com'
     ;
 
-  server.listen(port, function() {
+  server.listen(port, host, function() {
     console.log('\n', 'Listening on http://' + host + ':' + port, '\n');
     
     console.log('Test these links in your browser:');
